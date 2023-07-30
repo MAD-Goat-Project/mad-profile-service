@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type UnathorizatedError struct {
+type UnauthorizedError struct {
 	Status  string `json:"status"`
 	Code    int    `json:"code"`
 	Method  string `json:"method"`
@@ -15,9 +15,9 @@ type UnathorizatedError struct {
 
 func Auth() gin.HandlerFunc {
 
-	return gin.HandlerFunc(func(ctx *gin.Context) {
+	return func(ctx *gin.Context) {
 
-		var errorResponse UnathorizatedError
+		var errorResponse UnauthorizedError
 
 		errorResponse.Status = "Forbidden"
 		errorResponse.Code = http.StatusForbidden
@@ -31,7 +31,7 @@ func Auth() gin.HandlerFunc {
 
 		claims, err := utils.VerifyToken(ctx, "JWT_SECRET")
 
-		errorResponse.Status = "Unathorizated"
+		errorResponse.Status = "Unauthorized"
 		errorResponse.Code = http.StatusUnauthorized
 		errorResponse.Method = ctx.Request.Method
 		errorResponse.Message = "accessToken invalid or expired"
@@ -42,8 +42,8 @@ func Auth() gin.HandlerFunc {
 		} else {
 			// global value result
 			ctx.Set("user", claims)
-			// return to next method if token is exist
+			// return to next method if token is valid
 			ctx.Next()
 		}
-	})
+	}
 }

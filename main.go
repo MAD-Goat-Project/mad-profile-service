@@ -2,25 +2,21 @@ package main
 
 import (
 	route "github.com/MAD-Goat-Project/mad-profile-service/routes"
-	"github.com/MAD-Goat-Project/mad-profile-service/utils" // Update this import path
+	"github.com/MAD-Goat-Project/mad-profile-service/utils"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"log"
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
 
 	router := SetupRouter()
-
-	log.Fatal(router.Run(":" + utils.GodotEnv("GO_PORT")))
+	logrus.Fatal(router.Run(":" + utils.GodotEnv("GO_PORT")))
 }
 
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
-	/**
-	@description Setup Mode Application
-	*/
 	if utils.GodotEnv("GO_ENV") != "production" && utils.GodotEnv("GO_ENV") != "test" {
 		gin.SetMode(gin.DebugMode)
 	} else if utils.GodotEnv("GO_ENV") == "test" {
@@ -38,6 +34,5 @@ func SetupRouter() *gin.Engine {
 	}))
 
 	route.InitProfileRoutes(router)
-
 	return router
 }

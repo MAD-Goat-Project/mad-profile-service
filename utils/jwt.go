@@ -6,8 +6,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/sirupsen/logrus"
 	"strings"
 )
@@ -15,7 +15,6 @@ import (
 func VerifyToken(ctx *gin.Context, SecretPublicKeyEnvName string) (jwt.MapClaims, error) {
 	tokenHeader := ctx.GetHeader("Authorization")
 	accessToken := strings.SplitAfter(tokenHeader, "Bearer")[1]
-	//Trim
 	accessToken = strings.Trim(accessToken, " ")
 	jwtSecretKey := GodotEnv(SecretPublicKeyEnvName)
 
@@ -34,19 +33,17 @@ func VerifyToken(ctx *gin.Context, SecretPublicKeyEnvName string) (jwt.MapClaims
 	})
 	if err != nil {
 		logrus.Error("Error parsing or validating token:", err)
-		return nil, err
 	}
 
 	if !token.Valid {
 		logrus.Error("Invalid token")
-		return nil, errors.New("Token wasn't verified correctly")
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok { //&& token.Valid {
 		return claims, nil
 	}
 
-	return nil, errors.New("Token wasn't verified correctly")
+	return nil, errors.New("token wasn't verified correctly")
 }
 
 func parseKeycloakRSAPublicKey(base64Encoded string) (*rsa.PublicKey, error) {
@@ -63,4 +60,24 @@ func parseKeycloakRSAPublicKey(base64Encoded string) (*rsa.PublicKey, error) {
 		return publicKey, nil
 	}
 	return nil, fmt.Errorf("unexpected key type %T", publicKey)
+}
+
+func GetJWTRealmAccessRoles(claims jwt.MapClaims) (map[string]interface{}, error) {
+	realmAccess, ok := claims["realm_access"].(map[string]interface{})
+	if !ok {
+		return nil, fmt.Errorf("realm access data not found or invalid")
+	}
+
+	return realmAccess, nil
+}
+
+func GetJWTAccountEmail(claims jwt.MapClaims) (string, error) {
+
+	fmt.Println(claims)
+	email, ok := claims["email"].(string)
+	if !ok {
+		return "", fmt.Errorf("email not found or invalid")
+	}
+
+	return email, nil
 }

@@ -6,10 +6,11 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/sirupsen/logrus"
-	"strings"
 )
 
 func VerifyToken(ctx *gin.Context, SecretPublicKeyEnvName string) (jwt.MapClaims, error) {
@@ -73,7 +74,6 @@ func GetJWTRealmAccessRoles(claims jwt.MapClaims) (map[string]interface{}, error
 
 func GetJWTAccountEmail(claims jwt.MapClaims) (string, error) {
 
-	fmt.Println(claims)
 	email, ok := claims["email"].(string)
 	if !ok {
 		return "", fmt.Errorf("email not found or invalid")

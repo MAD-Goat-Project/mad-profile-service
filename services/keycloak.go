@@ -2,6 +2,7 @@ package keycloak
 
 import (
 	"fmt"
+
 	"github.com/MAD-Goat-Project/mad-profile-service/utils"
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/gin-gonic/gin"
@@ -12,10 +13,10 @@ type Keycloak struct {
 }
 
 func GetUserDetails(ctx *gin.Context, email string, roles map[string]interface{}) ([]map[string]interface{}, error) {
-	keycloakURL := utils.GodotEnv("KEYCLOAK_URL")
-	realm := utils.GodotEnv("KEYCLOAK_REALM")
-	clientID := utils.GodotEnv("KEYCLOAK_CLIENT_ID")
-	clientSecret := utils.GodotEnv("KEYCLOAK_CLIENT_SECRET")
+	keycloakURL := utils.GodotEnv("KC_SERVER_URL")
+	realm := utils.GodotEnv("KC_REALM")
+	clientID := utils.GodotEnv("KC_CLIENT_ID")
+	clientSecret := utils.GodotEnv("KC_SECRET")
 
 	keycloakClient := gocloak.NewClient(keycloakURL)
 	contextValue := ctx.Request.Context()

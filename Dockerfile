@@ -13,6 +13,6 @@ COPY --from=build /app/profile .
 
 ENV GIN_MODE=release
 
-EXPOSE 8080
+EXPOSE 3000
 
 CMD ["./profile"]

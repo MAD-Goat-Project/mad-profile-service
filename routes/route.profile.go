@@ -9,6 +9,14 @@ import (
 func InitProfileRoutes(route *gin.Engine) {
 
 	groupRoute := route.Group("/api/v1").Use(middlewares.Auth())
+	groupRoute.GET("/", welcome)
 	groupRoute.GET("profile", controllers.GetUserDetails)
 
+}
+
+
+func welcome(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "Welcome to MAD Profile Service",
+	})
 }

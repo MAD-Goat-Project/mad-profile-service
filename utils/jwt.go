@@ -32,9 +32,11 @@ func VerifyToken(ctx *gin.Context, SecretPublicKeyEnvName string) (jwt.MapClaims
 		// return the public key that is used to validate the token.
 		return publicKey, nil
 	})
+	
 	if err != nil {
 		logrus.Error("Error parsing or validating token:", err)
 	}
+
 
 	if !token.Valid {
 		logrus.Error("Invalid token")
